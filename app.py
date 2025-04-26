@@ -8,7 +8,7 @@ import os
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pool_league.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///pool_league.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -40,10 +40,6 @@ class TournamentSettings(db.Model):
     win_points = db.Column(db.Integer, nullable=False)
     loss_points = db.Column(db.Integer, nullable=False)
     is_active = db.Column(db.Boolean, default=True)
-
-with app.app_context():
-    db.drop_all()  # Drop all existing tables
-    db.create_all()  # Create new tables
 
 def generate_round_matches(players):
     """
@@ -589,3 +585,6 @@ def record_coin_flip():
         flash(f'Error recording coin flip result: {str(e)}', 'error')
     
     return redirect(url_for('matches'))
+
+# if __name__ == '__main__':
+#     app.run(debug=True, port=5006)
