@@ -586,5 +586,6 @@ def record_coin_flip():
     
     return redirect(url_for('matches'))
 
-# if __name__ == '__main__':
-#     app.run(debug=True, port=5006)
+if __name__ == '__main__':
+    app.run()
+
