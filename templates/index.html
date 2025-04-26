@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Tournament Setup{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/setup.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="setup-form">
+    <h1 class="text-center mb-4">Tournament Setup</h1>
+    
+    <form action="{{ url_for('setup_tournament') }}" method="post" id="tournamentForm">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title h5 mb-0">Basic Settings</h3>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Number of Players</label>
+                        <select name="num_players" class="form-select" id="numPlayers" required>
+                            {% for i in range(2, 11) %}
+                            <option value="{{ i }}">{{ i }} Players</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Number of Rounds</label>
+                        <select name="num_rounds" class="form-select" required>
+                            <option value="1">1 Round</option>
+                            <option value="2" selected>2 Rounds</option>
+                            <option value="3">3 Rounds</option>
+                            <option value="4">4 Rounds</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title h5 mb-0">Points System</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="form-label">Points for Winning</label>
+                        <input type="number" name="win_points" class="form-control" value="3" required min="0">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Points for Losing</label>
+                        <input type="number" name="loss_points" class="form-control" value="1" required min="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="card-title h5 mb-0">Player Names</h3>
+            </div>
+            <div class="card-body">
+                <div id="playerInputs">
+                    <!-- Player input fields will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg" id="submitButton">Start Tournament</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const numPlayersSelect = document.getElementById('numPlayers');
+    const playerInputsContainer = document.getElementById('playerInputs');
+    const form = document.getElementById('tournamentForm');
+    const submitButton = document.getElementById('submitButton');
+    let lastInputField = null;
+
+    function updatePlayerInputs() {
+        const numPlayers = parseInt(numPlayersSelect.value);
+        playerInputsContainer.innerHTML = '';
+
+        for (let i = 1; i <= numPlayers; i++) {
+            const div = document.createElement('div');
+            div.className = 'player-input';
+            div.innerHTML = `
+                <label class="form-label">Player ${i} Name</label>
+                <input type="text" name="player_name_${i}" class="form-control player-name-input" required 
+                       data-player="${i}" placeholder="Enter Player ${i} Name">
+            `;
+            playerInputsContainer.appendChild(div);
+        }
+        
+        // Update last input field reference
+        const inputs = document.querySelectorAll('.player-name-input');
+        lastInputField = inputs[inputs.length - 1];
+        
+        // Add keypress handlers to all input fields
+        inputs.forEach((input, index) => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault(); // Prevent form submission
+                    // If this is not the last input, focus the next one
+                    if (index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                }
+            });
+        });
+    }
+
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate all player names are filled
+        const playerInputs = document.querySelectorAll('.player-name-input');
+        let allFilled = true;
+        let uniqueNames = new Set();
+        
+        playerInputs.forEach(input => {
+            if (!input.value.trim()) {
+                allFilled = false;
+                input.classList.add('is-invalid');
+            } else {
+                input.classList.remove('is-invalid');
+                uniqueNames.add(input.value.trim().toLowerCase());
+            }
+        });
+        
+        // Check for unique names
+        if (uniqueNames.size !== playerInputs.length) {
+            alert('All player names must be unique!');
+            return;
+        }
+        
+        // Only submit if all names are filled
+        if (allFilled) {
+            form.submit();
+        } else {
+            alert('Please fill in all player names!');
+        }
+    });
+
+    numPlayersSelect.addEventListener('change', updatePlayerInputs);
+    updatePlayerInputs(); // Initialize with default value
+});
+</script>
+{% endblock %} 

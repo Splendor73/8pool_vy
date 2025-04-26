@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Tournament Standings{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        .table td, .table th {
+            padding: 6px 8px;
+            font-size: 0.9rem;
+        }
+        
+        .container {
+            padding-left: 8px;
+            padding-right: 8px;
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .card {
+            margin-bottom: 12px;
+        }
+        
+        .card-body {
+            padding: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Tournament Standings</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Player</th>
+                            <th>Points</th>
+                            <th>Matches</th>
+                            <th>Wins</th>
+                            <th>Losses</th>
+                            <th>Win Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in players %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ player.name }}</td>
+                            <td>{{ player.points }}</td>
+                            <td>{{ player.matches_played }}</td>
+                            <td>{{ player.wins }}</td>
+                            <td>{{ player.losses }}</td>
+                            <td>
+                                {% if player.matches_played > 0 %}
+                                    {{ "%.1f"|format(player.wins / player.matches_played * 100) }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Player Statistics{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 12px;
+        }
+        
+        .card-header {
+            padding: 0.6rem 1rem;
+        }
+        
+        .card-body {
+            padding: 0.8rem;
+        }
+        
+        .table td, .table th {
+            padding: 4px 6px;
+            font-size: 0.85rem;
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .h6 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .list-unstyled {
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .list-unstyled li {
+            margin-bottom: 0.3rem;
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.3em 0.5em;
+        }
+        
+        .gap-1 {
+            gap: 0.25rem !important;
+        }
+        
+        .mb-3 {
+            margin-bottom: 0.8rem !important;
+        }
+        
+        .table-sm td, .table-sm th {
+            padding: 0.2rem 0.4rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Player Statistics</h1>
+    
+    <div class="row">
+        {% for player_id, stats in player_statistics.items() %}
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">{{ stats.team.name }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <h4 class="h6">Overall Stats</h4>
+                        <ul class="list-unstyled">
+                            <li>Points: {{ stats.team.points }}</li>
+                            <li>Matches Played: {{ stats.team.matches_played }}</li>
+                            <li>Wins: {{ stats.team.wins }}</li>
+                            <li>Losses: {{ stats.team.losses }}</li>
+                            <li>Win Rate: 
+                                {% if stats.team.matches_played > 0 %}
+                                    {{ "%.1f"|format(stats.team.wins / stats.team.matches_played * 100) }}%
+                                {% else %}
+                                    0%
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h4 class="h6">Last 5 Matches</h4>
+                        <div class="d-flex gap-1">
+                            {% for result in stats.last_5 %}
+                                {% if result == true %}
+                                    <span class="badge bg-success">W</span>
+                                {% elif result == false %}
+                                    <span class="badge bg-danger">L</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">-</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    {% if stats.opponent_stats %}
+                    <div>
+                        <h4 class="h6">Head-to-Head Records</h4>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Opponent</th>
+                                        <th>W</th>
+                                        <th>L</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for opponent in stats.opponent_stats.values() %}
+                                    <tr>
+                                        <td>{{ opponent.name }}</td>
+                                        <td>{{ opponent.wins }}</td>
+                                        <td>{{ opponent.losses }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

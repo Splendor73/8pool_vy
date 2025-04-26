@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Match History{% endblock %}
+
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        .table td, .table th {
+            padding: 6px 8px;
+            font-size: 0.9rem;
+        }
+        
+        .badge {
+            font-size: 0.7rem;
+            padding: 0.3em 0.5em;
+        }
+        
+        .table td:nth-child(4) { /* Winner column */
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .card-body {
+            padding: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Match History</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Round</th>
+                            <th>Player 1</th>
+                            <th>Player 2</th>
+                            <th>Winner</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for match in matches %}
+                        <tr>
+                            <td>{{ match.round_number }}</td>
+                            <td>
+                                {{ match.player1.name }}
+                                {% if match.winner_id == match.player1_id %}
+                                <span class="badge bg-success">W</span>
+                                {% elif match.winner_id == match.player2_id %}
+                                <span class="badge bg-danger">L</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ match.player2.name }}
+                                {% if match.winner_id == match.player2_id %}
+                                <span class="badge bg-success">W</span>
+                                {% elif match.winner_id == match.player1_id %}
+                                <span class="badge bg-danger">L</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if match.winner %}
+                                    {{ match.winner.name }}
+                                {% else %}
+                                    <span class="text-muted">Not Played</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ match.match_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

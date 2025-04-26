@@ -1,0 +1,616 @@
+:root {
+    --primary-color: #0f4c75;
+    --secondary-color: #3282b8;
+    --accent-color: #bbe1fa;
+    --dark-color: #1b262c;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --text-light: #ffffff;
+    --text-dark: #1b262c;
+    --table-bg: rgba(27, 38, 44, 0.9);
+    --table-stripe: rgba(15, 76, 117, 0.3);
+    --table-hover: rgba(50, 130, 184, 0.3);
+    --table-border: rgba(50, 130, 184, 0.3);
+}
+
+body { 
+    padding-top: 80px; /* Add padding for fixed navbar */
+    padding-bottom: 40px; 
+    background-color: #0f0f0f;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%233282b8' fill-opacity='0.1'%3E%3Cpath opacity='0.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-light);
+}
+
+/* Navbar styling - Improved Dark Theme */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background: transparent;
+    border-bottom: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.navbar > .container {
+    background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    border-bottom: 1px solid var(--secondary-color);
+    border-radius: 0 0 15px 15px;
+    padding: 0.8rem 1.5rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+.navbar-brand {
+    font-family: 'Audiowide', cursive;
+    color: var(--accent-color) !important;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(187, 225, 250, 0.5);
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    padding: 0.5rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 15px rgba(187, 225, 250, 0.8);
+    transform: scale(1.05);
+}
+
+.nav-link {
+    color: var(--text-light) !important;
+    font-weight: 500;
+    margin: 0 5px;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(187, 225, 250, 0.2), transparent);
+    transition: all 0.5s ease;
+}
+
+.nav-link:hover:before {
+    left: 100%;
+}
+
+.nav-link.active,
+.nav-link:hover {
+    color: var(--accent-color) !important;
+    background-color: rgba(187, 225, 250, 0.1);
+    border: 1px solid var(--secondary-color);
+    box-shadow: 0 0 10px rgba(187, 225, 250, 0.2);
+    transform: translateY(-2px);
+}
+
+.navbar-toggler {
+    border: 1px solid var(--secondary-color);
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+    background-color: rgba(187, 225, 250, 0.1);
+    border-color: var(--accent-color);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(187, 225, 250, 0.8)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Main container styling - NEW */
+.main-container {
+    /* width: 96%; Use Bootstrap container */
+    /* max-width: 1800px; Use Bootstrap container */
+    /* margin: 0 auto; Use Bootstrap container */
+    padding-top: 2rem; /* Add padding from navbar */
+    padding-bottom: 2rem; /* Add padding from footer */
+    /* border-radius: 15px; /* Round corners for better aesthetics */
+}
+
+/* Card styling */
+.card {
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border: none;
+    border-radius: 12px;
+    background-color: var(--table-bg);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--table-border);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--text-light);
+    border-bottom: none;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+    color: var(--text-light);
+}
+
+/* Button styling */
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    padding: 10px 24px;
+    font-weight: 500;
+    border-radius: 50px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(50, 130, 184, 0.3);
+    color: white; /* Ensure text is light */
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var (--secondary-color), var(--primary-color));
+    box-shadow: 0 7px 20px rgba(50, 130, 184, 0.5);
+    color: white; /* Ensure text remains light on hover */
+}
+
+.btn-primary:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: all 0.6s;
+}
+
+.btn-primary:hover:before {
+    left: 100%;
+}
+
+/* Container styling - Using Bootstrap's default */
+.container {
+    /* max-width: 1140px; Use Bootstrap default */
+    /* padding-left: 15px; Use Bootstrap default */
+    /* padding-right: 15px; Use Bootstrap default */
+    /* margin-left: auto; Use Bootstrap default */
+    /* margin-right: auto; Use Bootstrap default */
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+h1 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-family: 'Audiowide', cursive;
+    text-shadow: 0px 0px 10px rgba(187, 225, 250, 0.5);
+    position: relative;
+    display: inline-block; /* Changed from block */
+    padding-bottom: 10px;
+}
+
+h1:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: 3px;
+    background: var(--secondary-color);
+    border-radius: 3px;
+}
+
+/* Page title container */
+.page-title-container {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+/* Alerts */
+.alert {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    background-color: var(--table-bg);
+    border: 1px solid var(--table-border);
+    color: var(--text-light);
+}
+
+/* Table styling improvements */
+.table {
+    color: var(--text-light);
+    background-color: var(--table-bg);
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--table-border);
+}
+
+.table th {
+    background-color: var(--primary-color);
+    color: var(--text-light) !important;
+    font-weight: 600;
+    padding: 14px 18px;
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.table td {
+    padding: 12px 18px;
+    color: var(--text-light) !important;
+    border-bottom: 1px solid var(--table-border);
+    vertical-align: middle;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    background-color: var(--table-stripe);
+    color: var(--text-light) !important;
+}
+
+.table-striped>tbody>tr:nth-of-type(even)>* {
+    background-color: var(--table-bg);
+    color: var(--text-light) !important;
+}
+
+.table-hover>tbody>tr:hover>* {
+    background-color: var(--table-hover);
+    color: var (--text-light) !important;
+}
+
+/* Badge styling */
+.badge {
+    padding: 0.5em 0.8em;
+    font-weight: 500;
+    border-radius: 6px; /* Slightly rounded badge */
+}
+
+/* Page transition effect */
+.page-transition {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Footer */
+.footer {
+    background-color: var(--dark-color);
+    padding: 1rem;
+    text-align: center;
+    color: var(--accent-color);
+    /* position: fixed; Remove fixed position */
+    /* bottom: 0; */
+    width: 100%;
+    font-size: 0.9rem;
+    margin-top: 2rem; /* Add margin to push it down */
+    border-top: 1px solid #111;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* Winner/loser styling */
+.winner {
+    color: var(--success-color);
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+}
+
+.loser {
+    color: var(--danger-color);
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+}
+
+/* Grid layout improvements */
+.equal-height-cards {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.equal-height-cards .col, .equal-height-cards [class*="col-"] { /* Target bootstrap columns */
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 25px; /* Add space below cards */
+}
+
+.equal-height-cards .card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.equal-height-cards .card-body {
+    flex-grow: 1; /* Ensure body grows */
+}
+
+/* New layout styles */
+.content-section {
+    margin-bottom: 2.5rem;
+}
+
+/* Two column layout with sidebar - Refined */
+.main-content-with-sidebar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem; /* Increased gap */
+}
+
+.main-content {
+    flex: 1 1 60%; /* Adjusted flex basis */
+    min-width: 300px;
+    /* Ensure content doesn't overflow */
+    overflow-x: auto;
+}
+
+.sidebar-content {
+    flex: 1 1 35%; /* Adjusted flex basis */
+    min-width: 280px; /* Slightly larger min-width */
+}
+
+/* Responsive adjustments */
+@media (max-width: 991.98px) { /* Adjust breakpoint if needed */
+    .main-content-with-sidebar {
+        flex-direction: column;
+    }
+
+    .main-content, .sidebar-content {
+        flex: 1 1 100%;
+        min-width: 0; /* Reset min-width for column layout */
+    }
+}
+
+
+@media (max-width: 768px) {
+    /* Removed main-container changes as Bootstrap handles it */
+
+    h1 {
+        font-size: 1.8rem; /* Smaller headings on mobile */
+    }
+    .navbar > .container {
+        border-radius: 0; /* No rounded corners on mobile */
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    body {
+        padding-top: 70px; /* Adjust padding for potentially smaller navbar */
+    }
+}
+
+/* Modal Styling */
+.modal-content {
+    background-color: var(--dark-color);
+    color: var(--text-light);
+    border: 1px solid var(--secondary-color);
+    border-radius: 10px;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(50, 130, 184, 0.3);
+    color: var(--accent-color); /* Ensure header text is light */
+}
+
+.modal-title {
+     color: var(--accent-color); /* Ensure title is light */
+     font-weight: 600;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body .form-label {
+    color: var(--accent-color); /* Light label */
+    margin-bottom: 0.5rem;
+}
+
+.modal-body .form-select {
+    background-color: rgba(27, 38, 44, 0.9);
+    border: 1px solid rgba(50, 130, 184, 0.6);
+    color: var(--text-light);
+    border-radius: 8px;
+}
+
+.modal-body .form-select:focus {
+    background-color: rgba(15, 76, 117, 0.4);
+    border-color: var(--accent-color);
+    color: white;
+    box-shadow: 0 0 0 0.25rem rgba(187, 225, 250, 0.3);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(50, 130, 184, 0.3);
+    padding: 1rem;
+    background-color: rgba(0,0,0,0.2); /* Slightly different footer background */
+    border-radius: 0 0 9px 9px; /* Match content radius */
+}
+
+/* Style secondary buttons (like Cancel) */
+.btn-secondary {
+    background-color: #6c757d; /* Standard Bootstrap gray */
+    border: none;
+    padding: 10px 24px;
+    font-weight: 500;
+    border-radius: 50px;
+    transition: all 0.3s;
+    color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure close button is visible */
+.modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%); /* Make it white */
+}
+
+/* Form controls in dark theme */
+.form-control {
+    background-color: rgba(27, 38, 44, 0.9);
+    border: 1px solid var(--table-border);
+    color: var(--text-light);
+}
+
+.form-control:focus {
+    background-color: rgba(15, 76, 117, 0.4);
+    border-color: var(--accent-color);
+    color: var(--text-light);
+    box-shadow: 0 0 0 0.25rem rgba(187, 225, 250, 0.25);
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Match card specific styling */
+.match-card {
+    margin-bottom: 1.5rem;
+}
+
+.match-card .player-name {
+    color: var(--accent-color);
+    font-weight: 600;
+}
+
+.match-card .score {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--text-light);
+}
+
+/* Making UI more compact for mobile */
+@media (max-width: 768px) {
+    body {
+        padding-top: 60px; /* Reduced padding for navbar */
+        font-size: 0.9rem; /* Slightly smaller base font size on mobile */
+    }
+
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .navbar > .container {
+        padding: 0.5rem 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.2rem; /* Smaller brand text */
+    }
+
+    .nav-link {
+        padding: 0.4rem 0.8rem;
+        margin: 2px 0;
+    }
+
+    .card {
+        margin-bottom: 15px; /* Reduced card spacing */
+    }
+
+    .card-header {
+        padding: 0.75rem 1rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    .table td, .table th {
+        padding: 8px 12px; /* More compact table cells */
+    }
+
+    h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    /* More compact buttons */
+    .btn {
+        padding: 6px 16px;
+        font-size: 0.9rem;
+    }
+
+    /* Adjust modal for mobile */
+    .modal-header {
+        padding: 0.75rem;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        padding: 0.75rem;
+    }
+}
+
+/* Making match cards more compact */
+.match-card {
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.match-players {
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+/* More compact standings table */
+.standings-card td {
+    padding: 8px 12px;
+}
+
+/* Adjust button sizes */
+.edit-name-btn {
+    padding: 1px 6px;
+    font-size: 0.75rem;
+}

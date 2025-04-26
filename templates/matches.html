@@ -1,0 +1,571 @@
+{% extends "base.html" %}
+
+{% block title %}Tournament Matches{% endblock %}
+
+{% block extra_css %}
+<style>
+    .standings-card {
+        margin-bottom: 15px;
+    }
+    .round-card {
+        margin-bottom: 20px;
+    }
+    .match-card {
+        margin-bottom: 10px;
+        padding: 12px;
+    }
+    .winner {
+        font-weight: bold;
+        color: #28a745;
+    }
+    .loser {
+        color: #dc3545;
+    }
+    .unplayed {
+        color: #6c757d;
+    }
+    .match-players {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    .vs {
+        font-weight: bold;
+        color: #666;
+    }
+    .final-match {
+        background-color: var(--table-bg);
+        border: 2px solid var(--secondary-color);
+        box-shadow: 0 0 20px rgba(50, 130, 184, 0.2);
+    }
+    .final-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--text-light);
+        padding: 15px;
+        margin: -15px -15px 15px -15px;
+        border-radius: 4px 4px 0 0;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    #coin {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+        transform-style: preserve-3d;
+    }
+
+    #coin .side-a,
+    #coin .side-b {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        backface-visibility: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+    }
+
+    #coin .side-a {
+        background-color: gold;
+        color: white;
+        z-index: 2;
+    }
+
+    #coin .side-b {
+        background-color: silver;
+        color: white;
+        transform: rotateY(-180deg);
+    }
+
+    @keyframes flip {
+        0% { transform: rotateY(0); }
+        100% { transform: rotateY(1800deg); }
+    }
+
+    .animate-flip {
+        animation: flip 3s ease-out forwards;
+    }
+
+    .tie-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 4px;
+        border: 1px solid #ffeeba;
+    }
+
+    .standings-card td {
+        color: var(--text-light) !important;
+        vertical-align: middle;
+    }
+    
+    .edit-name-btn {
+        margin-right: 5px;
+        padding: 2px 8px;
+        font-size: 0.8rem;
+        min-width: 28px;
+    }
+    
+    .player-name-cell {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .player-name {
+        flex-grow: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Compact mobile styles */
+    @media (max-width: 768px) {
+        .standings-card .table td, 
+        .standings-card .table th {
+            padding: 6px 8px;
+            font-size: 0.9rem;
+        }
+        
+        .edit-name-btn {
+            padding: 1px 4px;
+            font-size: 0.7rem;
+            margin-right: 3px;
+            min-width: 22px;
+        }
+        
+        .player-name-cell {
+            gap: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .edit-name-btn i {
+            font-size: 0.7rem;
+        }
+        
+        .match-card {
+            padding: 8px;
+        }
+        
+        .match-players {
+            font-size: 0.9rem;
+        }
+        
+        .final-header {
+            padding: 10px;
+            margin: -8px -8px 10px -8px;
+        }
+        
+        .btn {
+            padding: 4px 12px;
+            font-size: 0.85rem;
+        }
+        
+        h3, h4, h5 {
+            font-size: 1rem;
+        }
+        
+        .card-header {
+            padding: 0.6rem 1rem;
+        }
+        
+        .card-body {
+            padding: 0.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+    <!-- Standings -->
+    <div class="card standings-card">
+        <div class="card-header">
+            <h3 class="mb-0">Tournament Standings</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Position</th>
+                            <th>Player</th>
+                            <th>Points</th>
+                            <th>Matches</th>
+                            <th>Wins</th>
+                            <th>Losses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for team in teams %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td class="player-name-cell">
+                                <button class="btn btn-sm btn-outline-primary edit-name-btn" 
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editNameModal"
+                                        data-player-id="{{ team.id }}" 
+                                        data-player-name="{{ team.name }}">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <span class="player-name">{{ team.name }}</span>
+                            </td>
+                            <td>{{ team.points }}</td>
+                            <td>{{ team.matches_played }}</td>
+                            <td>{{ team.wins }}</td>
+                            <td>{{ team.losses }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Match (if exists) -->
+    {% if 'Final' in matches_by_round %}
+    <div class="card round-card">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Championship Final</h4>
+        </div>
+        <div class="card-body">
+            <div class="row justify-content-center">
+                {% for match in matches_by_round['Final'] %}
+                <div class="col-md-6">
+                    <div class="card match-card final-match">
+                        <div class="final-header">
+                            <h5 class="mb-0">Final Match</h5>
+                        </div>
+                        <div class="match-players">
+                            <span class="{% if match.winner_id == match.player1.id %}winner{% elif match.winner_id %}loser{% else %}unplayed{% endif %}">
+                                {{ match.player1.name }}
+                            </span>
+                            <span class="vs">vs</span>
+                            <span class="{% if match.winner_id == match.player2.id %}winner{% elif match.winner_id %}loser{% else %}unplayed{% endif %}">
+                                {{ match.player2.name }}
+                            </span>
+                        </div>
+                        {% if not match.winner_id %}
+                        <button class="btn btn-primary record-match-btn" 
+                                data-bs-toggle="modal"
+                                data-bs-target="#recordMatchModal"
+                                data-match-id="{{ match.id }}"
+                                data-player1-id="{{ match.player1.id }}"
+                                data-player1-name="{{ match.player1.name }}"
+                                data-player2-id="{{ match.player2.id }}"
+                                data-player2-name="{{ match.player2.name }}">
+                            Record Final Result
+                        </button>
+                        {% else %}
+                        <div class="text-success text-center">
+                            Tournament Champion: {{ match.winner.name }}
+                            <button class="btn btn-sm btn-outline-secondary ms-2 record-match-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#recordMatchModal"
+                                    data-match-id="{{ match.id }}"
+                                    data-player1-id="{{ match.player1.id }}"
+                                    data-player1-name="{{ match.player1.name }}"
+                                    data-player2-id="{{ match.player2.id }}"
+                                    data-player2-name="{{ match.player2.name }}"
+                                    data-winner-id="{{ match.winner_id }}">
+                                Edit
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Regular Round Matches -->
+    {% for round_num, round_matches in matches_by_round.items() %}
+    {% if round_num != 'Final' %}
+    <div class="card round-card">
+        <div class="card-header">
+            <h4 class="mb-0">Round {{ round_num }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for match in round_matches %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card match-card">
+                        <h5 class="card-title mb-3">Match {{ loop.index }}</h5>
+                        <div class="match-players">
+                            <span class="{% if match.winner_id == match.player1.id %}winner{% elif match.winner_id %}loser{% else %}unplayed{% endif %}">
+                                {{ match.player1.name }}
+                            </span>
+                            <span class="vs">vs</span>
+                            <span class="{% if match.winner_id == match.player2.id %}winner{% elif match.winner_id %}loser{% else %}unplayed{% endif %}">
+                                {{ match.player2.name }}
+                            </span>
+                        </div>
+                        {% if not match.winner_id %}
+                        <button class="btn btn-primary record-match-btn" 
+                                data-bs-toggle="modal"
+                                data-bs-target="#recordMatchModal"
+                                data-match-id="{{ match.id }}"
+                                data-player1-id="{{ match.player1.id }}"
+                                data-player1-name="{{ match.player1.name }}"
+                                data-player2-id="{{ match.player2.id }}"
+                                data-player2-name="{{ match.player2.name }}">
+                            Record Result
+                        </button>
+                        {% else %}
+                        <div class="text-success text-center">
+                            Winner: {{ match.winner.name }}
+                            <button class="btn btn-sm btn-outline-secondary ms-2 record-match-btn"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#recordMatchModal"
+                                    data-match-id="{{ match.id }}"
+                                    data-player1-id="{{ match.player1.id }}"
+                                    data-player1-name="{{ match.player1.name }}"
+                                    data-player2-id="{{ match.player2.id }}"
+                                    data-player2-name="{{ match.player2.name }}"
+                                    data-winner-id="{{ match.winner_id }}">
+                                Edit
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    <!-- Reset Tournament Button -->
+    <div class="text-center mb-4">
+        <form action="{{ url_for('reset_tournament') }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure you want to reset the tournament? This will delete all matches and reset all scores.');">
+            <button type="submit" class="btn btn-danger">Reset Tournament</button>
+        </form>
+    </div>
+</div>
+
+<!-- Record Match Modal -->
+<div class="modal fade" id="recordMatchModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record Match Result</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('record_match') }}" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="match_id" id="matchId">
+                    <div class="form-group">
+                        <label class="form-label">Select Winner:</label>
+                        <select name="winner" class="form-select" required>
+                            <option value="">-- Select Winner --</option>
+                            <option value="" id="player1Option"></option>
+                            <option value="" id="player2Option"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Result</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Name Modal -->
+<div class="modal fade" id="editNameModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Player Name</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ url_for('update_player_name') }}" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="player_id" id="editPlayerId">
+                    <div class="form-group">
+                        <label class="form-label">New Name:</label>
+                        <input type="text" name="new_name" id="newPlayerName" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Coin Flip Modal -->
+<div class="modal fade" id="coinFlipModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tie Breaker - Coin Flip</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center">
+                <h6 id="coinFlipPlayers" class="mb-4"></h6>
+                <div id="coin" class="mb-4">
+                    <div class="side-a">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <div class="side-b">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <button id="flipButton" class="btn btn-primary mb-3">Flip Coin</button>
+                <div id="flipResult" class="mt-3"></div>
+            </div>
+            <div class="modal-footer">
+                <form id="coinFlipForm" action="/record_coin_flip" method="POST">
+                    <input type="hidden" name="winner_id" id="coinFlipWinnerId">
+                    <input type="hidden" name="loser_id" id="coinFlipLoserId">
+                    <button type="submit" class="btn btn-success" disabled id="confirmFlip">Confirm Result</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this hidden div to store teams data -->
+<div id="teamsData" data-teams='{{ teams|tojson|safe }}'></div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Record Match Button Click
+    document.querySelectorAll('.record-match-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const matchId = this.dataset.matchId;
+            const player1Id = this.dataset.player1Id;
+            const player1Name = this.dataset.player1Name;
+            const player2Id = this.dataset.player2Id;
+            const player2Name = this.dataset.player2Name;
+            const winnerId = this.dataset.winnerId;
+            
+            document.getElementById('matchId').value = matchId;
+            
+            // Update winner options
+            const player1Option = document.getElementById('player1Option');
+            const player2Option = document.getElementById('player2Option');
+            
+            player1Option.value = player1Id;
+            player1Option.textContent = player1Name;
+            player2Option.value = player2Id;
+            player2Option.textContent = player2Name;
+            
+            if (winnerId) {
+                document.querySelector('select[name="winner"]').value = winnerId;
+            } else {
+                document.querySelector('select[name="winner"]').value = '';
+            }
+        });
+    });
+
+    // Edit Name Button Click
+    document.querySelectorAll('.edit-name-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const playerId = this.dataset.playerId;
+            const playerName = this.dataset.playerName;
+            
+            document.getElementById('editPlayerId').value = playerId;
+            document.getElementById('newPlayerName').value = playerName;
+        });
+    });
+
+    let currentCoinFlipData = null;
+
+    function showCoinFlip(player1, player2) {
+        currentCoinFlipData = {
+            player1: player1,
+            player2: player2
+        };
+        
+        document.getElementById('coinFlipPlayers').textContent = `${player1.name} vs ${player2.name}`;
+        document.getElementById('flipResult').textContent = '';
+        document.getElementById('confirmFlip').disabled = true;
+        document.getElementById('coin').classList.remove('animate-flip');
+        
+        // Using Bootstrap 5 modal show method
+        const modal = new bootstrap.Modal(document.getElementById('coinFlipModal'));
+        modal.show();
+    }
+
+    document.getElementById('flipButton').addEventListener('click', function() {
+        if (!currentCoinFlipData) return;
+        
+        const coin = document.getElementById('coin');
+        const flipResult = document.getElementById('flipResult');
+        const confirmFlip = document.getElementById('confirmFlip');
+        
+        coin.classList.remove('animate-flip');
+        flipResult.textContent = '';
+        confirmFlip.disabled = true;
+        
+        // Force browser reflow
+        void coin.offsetWidth;
+        
+        coin.classList.add('animate-flip');
+        
+        setTimeout(() => {
+            const winner = Math.random() < 0.5 ? currentCoinFlipData.player1 : currentCoinFlipData.player2;
+            const loser = winner === currentCoinFlipData.player1 ? currentCoinFlipData.player2 : currentCoinFlipData.player1;
+            
+            flipResult.innerHTML = `<strong>${winner.name}</strong> wins the coin flip!`;
+            document.getElementById('coinFlipWinnerId').value = winner.id;
+            document.getElementById('coinFlipLoserId').value = loser.id;
+            confirmFlip.disabled = false;
+        }, 3000);
+    });
+
+    function checkForTies(teamsData) {
+        if (!teamsData || teamsData.length < 2) return;
+        
+        // Get top score
+        const topScore = teamsData[0].points;
+        const tiedTeams = teamsData.filter(t => t.points === topScore);
+        
+        if (tiedTeams.length > 1) {
+            // Show tie warning
+            const tieWarning = document.createElement('div');
+            tieWarning.className = 'tie-warning';
+            tieWarning.textContent = 'There is a tie for the top position! A coin flip is needed to determine who goes to the finals.';
+            document.querySelector('.tournament-standings').prepend(tieWarning);
+            
+            // Add coin flip buttons for each pair that needs to be resolved
+            for (let i = 0; i < tiedTeams.length - 1; i++) {
+                const coinFlipBtn = document.createElement('button');
+                coinFlipBtn.className = 'btn btn-warning btn-sm ms-2';
+                coinFlipBtn.textContent = 'Flip Coin';
+                coinFlipBtn.addEventListener('click', () => showCoinFlip(tiedTeams[i], tiedTeams[i + 1]));
+                
+                const playerRow = document.querySelector(`tr:nth-child(${i + 1}) td:first-child`);
+                if (playerRow) {
+                    playerRow.appendChild(coinFlipBtn);
+                }
+            }
+        }
+    }
+
+    // Initialize with teams data from server
+    const teamsDataElement = document.getElementById('teamsData');
+    if (teamsDataElement) {
+        const teamsData = JSON.parse(teamsDataElement.dataset.teams);
+        checkForTies(teamsData);
+    }
+});
+</script>
+{% endblock %}
