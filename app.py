@@ -589,6 +589,3 @@ def record_coin_flip():
         flash(f'Error recording coin flip result: {str(e)}', 'error')
     
     return redirect(url_for('matches'))
-
-if __name__ == '__main__':
-    app.run(debug=True, port=5006)
